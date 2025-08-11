@@ -1922,7 +1922,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "triangle"
+name = "triangle-proxy"
 version = "0.1.0"
 dependencies = [
  "color-eyre",
