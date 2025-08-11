@@ -1,0 +1,23 @@
+[package]
+name = "triangle"
+version = "0.1.0"
+edition = "2024"
+
+[lints.clippy]
+all = "deny"
+pedantic = "warn"
+
+[dependencies]
+color-eyre = "0.6.5"
+console-subscriber = "0.4.1"
+figment = { version = "0.10.19", features = ["json", "env"] }
+rustls = "0.23.31"
+serde = { version = "1.0.219", features = ["derive"] }
+thiserror = "2.0.12"
+tls-parser = "0.12.2"
+tokio = { version = "1.47.1", features = ["full"] }
+tokio-rustls = "0.26.2"
+tokio-socks = "0.5.2"
+tracing = "0.1.41"
+url = { version = "2.5.4", features = ["serde"] }
+wildmatch = { version = "2.4.0", features = ["serde"] }
