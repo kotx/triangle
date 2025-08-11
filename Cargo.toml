@@ -4,6 +4,8 @@ version = "0.1.1"
 edition = "2024"
 license-file = "LICENSE"
 description = "Simple TLS-with-SNI to SOCKS5 proxy"
+repository = "https://github.com/kotx/triangle.git"
+homepage = "https://github.com/kotx/triangle"
 
 [lints.clippy]
 all = "deny"
