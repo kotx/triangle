@@ -26,3 +26,8 @@ tokio-socks = "0.5.2"
 tracing = "0.1.41"
 url = { version = "2.5.4", features = ["serde"] }
 wildmatch = { version = "2.4.0", features = ["serde"] }
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
