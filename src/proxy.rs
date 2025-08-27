@@ -22,17 +22,23 @@ pub enum ProxyTransport {
 
 impl ProxyTransport {
     pub async fn connect(&self, hostname: &str) -> Result<Box<dyn ProxyStream>, ProxyError> {
-        Ok(match self {
-            ProxyTransport::Direct => Box::new(TcpStream::connect(format!("{hostname}:443")).await?),
-            ProxyTransport::Socks5(socket_addr) => {
-                let stream = Socks5Stream::connect(
-                    socket_addr.as_slice(),
-                    TargetAddr::Domain(std::borrow::Cow::Borrowed(hostname), 443),
-                )
-                .await?;
-                Box::new(stream)
-            }
-        })
+        if hostname == "localhost" {
+            Err(ProxyError::InfiniteLoop) // TODO: better loop detection
+        } else {
+            Ok(match self {
+                ProxyTransport::Direct => {
+                    Box::new(TcpStream::connect(format!("{hostname}:443")).await?)
+                }
+                ProxyTransport::Socks5(socket_addr) => {
+                    let stream = Socks5Stream::connect(
+                        socket_addr.as_slice(),
+                        TargetAddr::Domain(std::borrow::Cow::Borrowed(hostname), 443),
+                    )
+                    .await?;
+                    Box::new(stream)
+                }
+            })
+        }
     }
 }
 

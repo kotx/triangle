@@ -17,6 +17,9 @@ pub enum ProxyError {
 
     #[error("could not find valid SNI extension")]
     MissingSNI,
+
+    #[error("prevented infinite loop")]
+    InfiniteLoop,
 }
 
 #[derive(Error, Debug)]
