@@ -53,7 +53,7 @@ async fn handle_connection(
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    console_subscriber::init();
+    tracing_subscriber::fmt::init();
     color_eyre::install()?;
 
     let config: Config = Figment::new()
