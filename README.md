@@ -2,7 +2,7 @@
 
 ![i guess we doin socks now](triangle.jpg)
 
-A simple TLS-with-SNI to SOCKS5 proxy inspired by [sniproxy](https://github.com/ameshkov/sniproxy).
+A simple TLS-with-SNI to SOCKS5/no socks/blackhole proxy inspired by [sniproxy](https://github.com/ameshkov/sniproxy).
 
 ## Installation
 
