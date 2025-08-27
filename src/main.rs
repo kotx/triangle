@@ -4,6 +4,7 @@ mod proxy;
 mod tls;
 
 use std::net::SocketAddr;
+use std::sync::Arc;
 use std::time::Duration;
 
 use color_eyre::eyre::Result;
@@ -27,8 +28,11 @@ async fn handle_connection(
     mut stream: TcpStream,
     addr: SocketAddr,
 ) -> Result<(), ProxyError> {
-    let (hostname, initial_buf) =
-        tokio::time::timeout(Duration::from_millis(config.timeout_ms), parse_sni(&mut stream)).await??;
+    let (hostname, initial_buf) = tokio::time::timeout(
+        Duration::from_millis(config.timeout_ms),
+        parse_sni(&mut stream),
+    )
+    .await??;
 
     let forward = config
         .forwards
@@ -56,10 +60,12 @@ async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
     color_eyre::install()?;
 
-    let config: Config = Figment::new()
-        .merge(Json::file("sniproxy.json"))
-        .merge(Env::prefixed("TRIANGLE_"))
-        .extract()?;
+    let config: Arc<Config> = Arc::new(
+        Figment::new()
+            .merge(Json::file("sniproxy.json"))
+            .merge(Env::prefixed("TRIANGLE_"))
+            .extract()?,
+    );
 
     tracing::info!("{config:?}");
 
@@ -67,9 +73,12 @@ async fn main() -> Result<()> {
     loop {
         match lc.accept().await {
             Ok((stream, addr)) => {
-                if let Err(err) = handle_connection(&config, stream, addr).await {
-                    tracing::error!("error proxying connection: {err}");
-                }
+                let config = config.clone();
+                tokio::spawn(async move {
+                    if let Err(err) = handle_connection(&config.clone(), stream, addr).await {
+                        tracing::error!("error proxying connection: {err}");
+                    }
+                });
             }
             Err(err) => tracing::error!("error accepting connection: {err}"),
         }
