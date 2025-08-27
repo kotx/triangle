@@ -1,6 +1,6 @@
 [package]
 name = "triangle-proxy"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2024"
 license-file = "LICENSE"
 description = "Simple TLS-with-SNI to SOCKS5 proxy"

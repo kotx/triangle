@@ -28,7 +28,7 @@ async fn handle_connection(
     addr: SocketAddr,
 ) -> Result<(), ProxyError> {
     let (hostname, initial_buf) =
-        tokio::time::timeout(Duration::from_secs(10), parse_sni(&mut stream)).await??;
+        tokio::time::timeout(Duration::from_millis(config.timeout_ms), parse_sni(&mut stream)).await??;
 
     let forward = config
         .forwards

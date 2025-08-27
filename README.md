@@ -25,6 +25,7 @@ Configuring Triangle is as simple as putting this in `sniproxy.json`:
 ```json
 {
   "listen_addr": "127.0.0.1:8443",
+  "timeout_ms": 10000, // timeout to initial handshake
   "forwards": [
     {
       "src": ["myip.wtf", "*.bsky.app"],
