@@ -1,7 +1,10 @@
 use std::{net::SocketAddr, str::FromStr};
 
 use serde::{Deserialize, de::Visitor};
-use tokio::io::{AsyncRead, AsyncWrite};
+use tokio::{
+    io::{AsyncRead, AsyncWrite},
+    net::TcpStream,
+};
 use tokio_socks::{TargetAddr, tcp::Socks5Stream};
 use url::Url;
 
@@ -13,12 +16,14 @@ impl<T> ProxyStream for T where T: AsyncRead + AsyncWrite + Unpin + Send {}
 
 #[derive(Debug)]
 pub enum ProxyTransport {
+    Direct,
     Socks5(Vec<SocketAddr>),
 }
 
 impl ProxyTransport {
     pub async fn connect(&self, hostname: &str) -> Result<Box<dyn ProxyStream>, ProxyError> {
         Ok(match self {
+            ProxyTransport::Direct => Box::new(TcpStream::connect(format!("{hostname}:443")).await?),
             ProxyTransport::Socks5(socket_addr) => {
                 let stream = Socks5Stream::connect(
                     socket_addr.as_slice(),
@@ -49,7 +54,11 @@ impl FromStr for ProxyTransport {
     type Err = ProxyTransportError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        ProxyTransport::try_from(Url::from_str(s)?)
+        if s == "direct" {
+            Ok(ProxyTransport::Direct)
+        } else {
+            ProxyTransport::try_from(Url::from_str(s)?)
+        }
     }
 }
 

@@ -29,6 +29,10 @@ Configuring Triangle is as simple as putting this in `sniproxy.json`:
     {
       "src": ["myip.wtf", "*.bsky.app"],
       "dst": ["socks5://127.0.0.1:9150"] // retry functionality is to be implemented
+    },
+    {
+      "src": ["*"], // fallback
+      "dst": ["direct"] // forward connecton directly (useful for proxy servers)
     }
   ]
 }
