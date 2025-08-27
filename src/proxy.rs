@@ -18,6 +18,7 @@ impl<T> ProxyStream for T where T: AsyncRead + AsyncWrite + Unpin + Send {}
 pub enum ProxyTransport {
     Direct,
     Socks5(Vec<SocketAddr>),
+    BlackHole,
 }
 
 impl ProxyTransport {
@@ -37,6 +38,7 @@ impl ProxyTransport {
                     .await?;
                     Box::new(stream)
                 }
+                ProxyTransport::BlackHole => Err(ProxyError::BlackHole)?,
             })
         }
     }
@@ -60,10 +62,10 @@ impl FromStr for ProxyTransport {
     type Err = ProxyTransportError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "direct" {
-            Ok(ProxyTransport::Direct)
-        } else {
-            ProxyTransport::try_from(Url::from_str(s)?)
+        match s {
+            "direct" => Ok(ProxyTransport::Direct),
+            "blackhole" => Ok(ProxyTransport::BlackHole),
+            _ => ProxyTransport::try_from(Url::from_str(s)?),
         }
     }
 }

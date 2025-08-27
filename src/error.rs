@@ -20,6 +20,9 @@ pub enum ProxyError {
 
     #[error("prevented infinite loop")]
     InfiniteLoop,
+
+    #[error("blackholing connection")]
+    BlackHole,
 }
 
 #[derive(Error, Debug)]
